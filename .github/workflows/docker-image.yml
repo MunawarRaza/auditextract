@@ -29,42 +29,45 @@ jobs:
   # Audit Extract
   # =======================================================
   audit-extract:
+    # if: contains(github.event.head_commit.message, 'deploy audit extract')
     name: Deploying Audit Extract
     runs-on: ubuntu-latest
     needs: get-environment
-    environment:
+    environment: 
       name: ${{ needs.get-environment.outputs.my_env }}
-    
-    steps:
-    - name: Test Variables
-      id: test-variables
-      run:
-        echo "${{ vars.ENVIRONMENT }}"
-        echo "${{ vars.AWS_DEFAULT_REGION }}"
-      
-    - name: Login to AWS
-      uses: aws-actions/configure-aws-credentials@v4.0.1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: Get branch name
-      id: branch
-      shell: bash
-      run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-    - name: Echo branch name
-      run: |
-        echo ${{ steps.branch.outputs.name }}
-    - name: Login to AWS ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Pushing image
-      id: build-image-audit-extract
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract
-        IMAGE_TAG: ${{ steps.branch.outputs.name }}
-      run: |
-        docker build -f docker/local/audit_extract/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image-audit-extract=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    permissions:
+      contents: write
+    steps:    
+      - name: Checkout github code
+        id: checkout-id
+        uses: actions/checkout@v4
+      - name: Test Variables
+        run: |
+          echo "${{ vars.ENVIRONMENT }}"
+          echo "${{ vars.AWS_DEFAULT_REGION }}"
+      - name: Login to AWS
+        uses: aws-actions/configure-aws-credentials@v4.0.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Get branch name
+        id: branch
+        shell: bash
+        run: echo "name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      - name: Echo branch name
+        run: |
+          echo ${{ steps.branch.outputs.name }}
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Pushing image
+        id: build-image-audit-extract
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract
+          IMAGE_TAG: ${{ steps.branch.outputs.name }}
+        run: |
+          docker build -f docker/local/audit_extract/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image-audit-extract=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
