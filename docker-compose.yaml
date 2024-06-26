@@ -1,0 +1,24 @@
+version: '3.8'
+
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:
+  dynamodb-storage:
+
+networks:
+  default:
+
+services:
+
+  audit-extract:
+    build:
+      context: .
+      dockerfile: ./docker/local/audit_extract/Dockerfile
+    container_name: audit-extract
+    volumes:
+      - ./code:/app
+    ports:
+      - "8085:8085"
+    env_file:
+      - ./docker/local/audit_extract/.env

@@ -1,0 +1,20 @@
+# https://docs.astral.sh/ruff/configuration/
+line-length = 98
+indent-width = 4
+src = ["code"]
+target-version = "py311"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[lint]
+select = ["D"]
+ignore = ["D202", "D100", "D101", "D104", "D105"]
+
+[lint.pydocstyle]
+convention = "google"
