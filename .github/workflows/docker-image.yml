@@ -65,33 +65,11 @@ jobs:
         id: build-image-audit-extract
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract_cactus
+          ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract_qult_ai
           IMAGE_TAG: ${{ steps.branch.outputs.name }}
         run: |
           docker build -f docker/local/audit_extract/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image-audit-extract=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           
-      - name: ai audit create new task definition
-        id: task-def-audit-extract
-        uses: aws-actions/amazon-ecs-render-task-definition@v1.1.3
-        with: 
-          task-definition: .github/workflows/${{ vars.ENVIRONMENT }}_audit_extract_ecs_task.json
-          container-name: ${{ vars.ENVIRONMENT }}_audit_extract_ecs_container
-          image: 590183784162.dkr.ecr.us-east-1.amazonaws.com/${{ vars.ENVIRONMENT }}_audit_extract_cactus:${{ steps.branch.outputs.name }}
-          environment-variables: |
-            ENVIRONMENT=${{ vars.ENVIRONMENT }}
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION=${{ vars.AWS_DEFAULT_REGION }}
-      - name: Cat rendered task
-        run: |
-          cat ${{ steps.task-def-audit-extract.outputs.task-definition }}
-      - name: Deploying to ecs
-        id: deploy-audit-extract
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1.4.11
-        with:
-          task-definition: ${{ steps.task-def-audit-extract.outputs.task-definition }}
-          service: ${{ vars.ENVIRONMENT }}_audit_extract_ecs_service
-          cluster: ${{ vars.ENVIRONMENT }}_audit_extract_ecs_cluster
-          wait-for-service-stability: false
+
