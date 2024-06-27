@@ -13,7 +13,7 @@
     
     "containerDefinitions": [
         {
-            "name": "main_audit_extract_cactus_ecs_container",
+            "name": "main_audit_extract_ecs_container",
             "workingDirectory": "/code/ai/chat",
             "essential": true,
             "portMappings": [
