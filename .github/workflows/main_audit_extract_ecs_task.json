@@ -1,0 +1,63 @@
+
+{
+    # Task definition configuration
+    "family": "main_audit_extract_cactus_ecs_container",
+    # Infrastructure Configuration
+    "networkMode": "awsvpc",
+    # Task size
+    "cpu": "4096",
+    "memory": "28672",
+    # Task roles - conditional
+    "taskRoleArn": "arn:aws:iam::590183784162:role/test_cactus_ecs_task_role",
+    "executionRoleArn": "arn:aws:iam::590183784162:role/test_cactus_ecs_task_role",
+    
+    "containerDefinitions": [
+        {
+            "name": "main_audit_extract_cactus_ecs_container",
+            "workingDirectory": "/code/ai/chat",
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 8085,
+                    "hostPort": 8085,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+
+            "cpu": 0,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "production/ecs_audit_extract_luminous",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }   
+            },
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": []
+        }
+    ],
+    
+
+    "volumes": [],
+    "placementConstraints": [],
+
+    "ephemeralStorage": {"sizeInGiB":  100},
+    "tags": [
+        {
+            "key": "Environment",
+            "value": "production"
+        },
+        {
+            "key": "ManagingProject",
+            "value": "bairesdev"
+        },
+        {
+            "key": "ManagedBy",
+            "value": "terraform"
+        }
+    ]
+}
