@@ -84,3 +84,14 @@ jobs:
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION=${{ vars.AWS_DEFAULT_REGION }}
+      - name: Cat rendered task
+        run: |
+          cat ${{ steps.task-def-audit-extract.outputs.task-definition }}
+      - name: Deploying to ecs
+        id: deploy-audit-extract
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1.4.11
+        with:
+          task-definition: ${{ steps.task-def-audit-extract.outputs.task-definition }}
+          service: ${{ vars.ENVIRONMENT }}_audit_extract_ecs_service
+          cluster: ${{ vars.ENVIRONMENT }}_audit_extract_ecs_cluster
+          wait-for-service-stability: false
