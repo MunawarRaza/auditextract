@@ -1,13 +1,13 @@
 
 {
-    # Task definition configuration
+
     "family": "main_audit_extract_cactus_ecs_container",
-    # Infrastructure Configuration
+
     "networkMode": "awsvpc",
-    # Task size
+
     "cpu": "4096",
     "memory": "28672",
-    # Task roles - conditional
+
     "taskRoleArn": "arn:aws:iam::590183784162:role/test_cactus_ecs_task_role",
     "executionRoleArn": "arn:aws:iam::590183784162:role/test_cactus_ecs_task_role",
     
