@@ -65,7 +65,7 @@ jobs:
         id: build-image-audit-extract
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract
+          ECR_REPOSITORY: ${{ vars.ENVIRONMENT }}_audit_extract_cactus
           IMAGE_TAG: ${{ steps.branch.outputs.name }}
         run: |
           docker build -f docker/local/audit_extract/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
