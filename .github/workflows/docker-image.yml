@@ -4,6 +4,7 @@ on:
     branches:
       - stage
       - quality
+      - demo
       - main
 jobs:
   get-environment:
